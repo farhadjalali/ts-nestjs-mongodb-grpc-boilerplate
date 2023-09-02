@@ -1,0 +1,23 @@
+{
+  "name": "weather-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/farhadjalali/weather-service.git",
+  "author": "Farhad <farhad.jalali@gmail.com>",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "docker:api-service": "docker build -t api-service -f api-service/Dockerfile .",
+    "docker:weather-service": "docker build -t weather-service -f weather-service/Dockerfile ."
+  },
+  "dependencies": {
+    "eslint": "^8.46.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.3"
+  },
+  "workspaces": [
+    "api-service",
+    "weather-service"
+  ]
+}

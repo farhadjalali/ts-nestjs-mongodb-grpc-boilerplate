@@ -1,0 +1,51 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: weather
+    volumes:
+      - data-volume:/data/db
+  api-service:
+    container_name: api-service
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    image: api-service:latest
+    ports:
+      - "9000:3000"
+      - "9001:3009"
+    volumes:
+      - ./api-service:/usr/app/api-service
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - WEATHER_SERVICE_ENDPOINT=weather-service:3000
+      - UPDATE_WEATHER_DATA_INTERVAL=0 0-23/1 * * *
+      - LOG_PORT=3009
+    depends_on:
+      - weather-service
+  weather-service:
+    container_name: weatherService
+    build:
+      context: .
+      dockerfile: weather-service/Dockerfile
+    image: weather-service:latest
+    ports:
+      - "50051:3000"
+      - "50052:3009"
+    volumes:
+      - ./weather-service:/usr/app/weather-service
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - OPEN_WEATHER_API_KEY=${OPEN_WEATHER_API_KEY}
+      - LOG_PORT=3009
+      - DB_URL=mongodb://mongo:27017/weather
+    depends_on:
+      - mongo
+volumes:
+  data-volume:

@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service WeatherService {
+  rpc GetAllCitiesWeather (google.protobuf.Empty) returns (WeatherList) {}
+  rpc UpdateWeatherData (google.protobuf.Empty) returns (ActionResponse) {}
+  rpc GetCityWeather (City) returns (Weather) {}
+  rpc GetCities (google.protobuf.Empty) returns (CityList) {}
+  rpc DeleteCity (City) returns (ActionResponse) {}
+  rpc CreateCity (City) returns (City) {}
+}
+
+message ActionResponse {
+  bool success = 1;
+  int32 count = 2;
+}
+
+message CityList {
+  repeated City cities = 1;
+}
+
+message Coord {
+  double lon = 1;
+  double lat = 2;
+}
+
+message City {
+  int32 id = 1;
+  string name = 2;
+  string country = 3;
+  int32 population = 4;
+  int32 timezone = 5;
+  int32 sunrise = 6;
+  int32 sunset = 7;
+  int32 temperature = 8;
+  Coord coord = 9;
+}
+
+message WeatherList {
+  repeated Weather weatherList = 1;
+}
+
+message Weather {
+  string cod = 1;
+  int32 message = 2;
+  int32 cnt = 3;
+  repeated ListEntry list = 4;
+  City city = 5;
+
+  message ListEntry {
+    int64 dt = 1;
+    Main main = 2;
+    repeated Weather weather = 3;
+    Clouds clouds = 4;
+    Wind wind = 5;
+    int32 visibility = 6;
+    double pop = 7;
+    Rain rain = 8;  // This is optional in proto3 by default
+    Sys sys = 9;
+    string dt_txt = 10;
+  }
+
+  message Main {
+      double temp = 1;
+      double feels_like = 2;
+      double temp_min = 3;
+      double temp_max = 4;
+      int32 pressure = 5;
+      int32 sea_level = 6;
+      int32 grnd_level = 7;
+      int32 humidity = 8;
+      double temp_kf = 9;
+  }
+
+  message Weather {
+      int32 id = 1;
+      string main = 2;
+      string description = 3;
+      string icon = 4;
+  }
+
+  message Clouds {
+      int32 all = 1;
+  }
+
+  message Wind {
+      double speed = 1;
+      int32 deg = 2;
+      double gust = 3;
+  }
+
+  message Rain {
+      double h3 = 1;  // Renamed "3h" to "h3" because field names starting with numbers are not allowed in proto
+  }
+
+  message Sys {
+      string pod = 1;
+  }
+
+  message City {
+      int32 id = 1;
+      string name = 2;
+      Coord coord = 3;
+      string country = 4;
+      int32 population = 5;
+      int32 timezone = 6;
+      int64 sunrise = 7;
+      int64 sunset = 8;
+  }
+}
+
